@@ -9,9 +9,9 @@
     Use querySelector to select that button and save it to a variable called sayHelloButton
 */
 
-// CODE HERE
+const sayHelloButton = document.querySelector(`#say-hello-button`)
 
-
+// console.log(sayHelloButton)
 // PROBLEM 2
 /*
     Create a function that changes sayHelloButton's background color to black and its text color to white (you can use the .style object or create a CSS class and use classList.add)
@@ -19,8 +19,13 @@
     Attach a mouseover event to sayHelloButton that calls the function you wrote
 */
 
-// CODE HERE
+const changeButtonColor = () => {
+    sayHelloButton.classList.toggle(`change-black`)
+    // console.log(sayHelloButton)
+}
 
+
+sayHelloButton.addEventListener('mouseover', changeButtonColor)
 
 // PROBLEM 3
 /*
@@ -31,7 +36,11 @@
     Attach another listener that fires your second function when the mouseout event occurs on the button
 */
 
-// CODE HERE
+const changeButtonColorBack = () => {
+    sayHelloButton.classList.add(`default`)
+}
+
+sayHelloButton.addEventListener("mouseout", changeButtonColor);
 
 
 // PROBLEM 4
@@ -52,7 +61,8 @@ const sayHello = () => {
 }
 // DO NOT EDIT FUNCTION
 
-// CODE HERE
+sayHelloButton.addEventListener("click", sayHello);
+
 
 
 // PROBLEM 5 
@@ -65,9 +75,18 @@ const sayHello = () => {
     
     Handle the promise that's returned with a .then, which you should pass a callback function to. Inside the callback function, console.log the response's data (in the intermediate instructions we'll come back to this function and add HTML).
 */ 
+baseURL = `http://localhost:3000`
 
 const ohMy = () => {
-    // YOUR CODE HERE
+    axios.get(`${baseURL}/animals`)
+    .then(res => {
+        console.log(res.data)
+        for(let i = 0; i < res.data.length; i++){
+            newP = document.createElement(`p`)
+            newP.textContent = (res.data[i])
+            document.querySelector(`body`).appendChild(newP)
+        }
+    })
 }
 
 document.getElementById('animals-button').addEventListener('click', ohMy)
@@ -85,19 +104,31 @@ document.getElementById('animals-button').addEventListener('click', ohMy)
     
     We'll be updating this function in the next problem.
 */
+repeatBtn = document.querySelector(`#repeat-button`)
+const printWords = (words) => {
+    console.log(words)
+}
 
 const repeatMyParam = () => {
-    //YOUR CODE HERE
+    const repeatText = document.querySelector('#repeat-text')
+    
+    axios.get(`${baseURL}/repeat/fun`)
+    .then(res => { 
+        repeatText.textContent = res.data
+        
+    })
 }
+
+
+repeatBtn.addEventListener(`click`, repeatMyParam)
 
 // PROBLEM 7
 /*
-    Now that we have the response data, let's add it to our web page! 
+Now that we have the response data, let's add it to our web page! 
     
     Inside the repeatMyParam function above, grab the element with the id of 'repeat-text' and set its textContent property equal to the response data.
 */
 
-// Code in the repeatMyParam function above
 
 
 
@@ -109,10 +140,17 @@ const repeatMyParam = () => {
 
     Outside of your new function, select the button with the id "query-button" and add a click event listener that calls your function.
 */
+const testAge = 20;
 
-// CODE HERE
+const checkData = () => {
+    axios.get(`${baseURL}/query-test/?age=${testAge}&name=clint
+    `)
+    .then(res => {
+        console.log(res.data)
+    })
+}
 
-
+const queryBtn = document.querySelector('#query-button').addEventListener(`click`, checkData)
 
 ////////////////
 //INTERMEDIATE//
@@ -125,7 +163,14 @@ const repeatMyParam = () => {
     On each iteration of the loop, create a new p element. Set its textContent equal the string at the current index (i) and then append the new p element onto the document's body. 
 */
 
-// Code in the ohMy function in Problem 5
+
+//  for (let i = 0; i < res.data.length; i++) {
+//    newP = document.createElement(`p`);
+//    newP.textContent = res.data[i];
+//    document.querySelector(`body`).appendChild(newP);
+//  }
+
+
 
 // PROBLEM 10 
 /*
@@ -136,7 +181,8 @@ const repeatMyParam = () => {
     2: Send more than 1 query on the URL -- what happened? 
 */
 
-// Edit code in Problem 8
+//  1. You sent an empty query!
+//  2. We got a JSON obect back with a message that says you have more than one query
 
 
 
@@ -163,4 +209,32 @@ const repeatMyParam = () => {
     Based on what we did earlier to display this type of data, write code that will display the response in your HTML document. 
 */
 
-// CODE HERE 
+
+
+const createFood = (event) => {
+    event.preventDefault()
+    let foodInput = document.querySelector(`input`)
+
+    let body = {
+        newFood: foodInput.value
+    }
+    
+    axios.post(`${baseURL}/food`, body)
+    .then(res => {
+        // let food = document.createElement('ul')
+            // for (let i = 0; i < res.data.length ; i++) {
+            newUL = document.createElement('ul')
+            newP = document.createElement(`p`);
+            newP.textContent = res.data.at(-1);
+            document.querySelector(`body`).appendChild(newP)
+            //newUL.appendChild(newP)
+        // }
+    })
+    //console.log(foodInput.innerHTML)
+    foodInput.value = ``
+}
+
+
+document.querySelector(`#addFood`).addEventListener(`click`, createFood)
+
+
